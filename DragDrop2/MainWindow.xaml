@@ -1,0 +1,210 @@
+﻿<Window
+  x:Class="DragDrop2.MainWindow"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+  xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+  xmlns:l="clr-namespace:DragDrop2"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  Title="DragDrop2"
+  Width="525"
+  Height="350"
+  d:DataContext="{d:DesignInstance {x:Type l:ViewModel}}"
+  SnapsToDevicePixels="True"
+  WindowStartupLocation="CenterScreen"
+  mc:Ignorable="d">
+  <Window.DataContext>
+    <l:ViewModel />
+  </Window.DataContext>
+  <Window.Resources>
+    <ContextMenu x:Key="EditItem_ContextMenu">
+      <MenuItem
+        Command="{x:Static l:EditableItemBehaviorCommands.Edit}"
+        CommandParameter="{Binding}"
+        CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" />
+      <MenuItem
+        Command="{x:Static l:EditableItemBehaviorCommands.Delete}"
+        CommandParameter="{Binding}"
+        CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" />
+      <MenuItem
+        Command="{x:Static l:EditableItemBehaviorCommands.Add}"
+        CommandParameter="{Binding}"
+        CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" />
+    </ContextMenu>
+
+    <ItemsPanelTemplate x:Key="FluidMove_ItemsPanelTemplate">
+      <WrapPanel IsItemsHost="True" Orientation="Horizontal">
+        <i:Interaction.Behaviors>
+          <ei:FluidMoveBehavior AppliesTo="Children" Duration="0:0:0.3">
+            <ei:FluidMoveBehavior.EaseX>
+              <ExponentialEase EasingMode="EaseInOut" />
+            </ei:FluidMoveBehavior.EaseX>
+            <ei:FluidMoveBehavior.EaseY>
+              <ExponentialEase EasingMode="EaseInOut" />
+            </ei:FluidMoveBehavior.EaseY>
+          </ei:FluidMoveBehavior>
+        </i:Interaction.Behaviors>
+      </WrapPanel>
+    </ItemsPanelTemplate>
+
+    <Style x:Key="TabHeader_ItemContainerStyle" TargetType="ListBoxItem">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ListBoxItem">
+            <ContentPresenter />
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <Trigger Property="IsSelected" Value="True">
+          <Setter Property="Background" Value="#FFF" />
+        </Trigger>
+        <DataTrigger Binding="{Binding}" Value="{x:Static CollectionView.NewItemPlaceholder}">
+          <Setter Property="BorderThickness" Value="0" />
+          <Setter Property="IsTabStop" Value="False" />
+          <Setter Property="Focusable" Value="False" />
+        </DataTrigger>
+      </Style.Triggers>
+    </Style>
+
+    <!--#region タブヘッダ用EditableItemBehavior Template-->
+    <DataTemplate x:Key="TabHeader_ItemTemplate">
+      <Border
+        Name="Border"
+        MinWidth="60"
+        Background="#FFE8E8E8"
+        BorderBrush="#FFACACAC"
+        BorderThickness="1,1,1,0"
+        ContextMenu="{StaticResource EditItem_ContextMenu}">
+        <i:Interaction.Behaviors>
+          <l:DragDropBehavior />
+        </i:Interaction.Behaviors>
+        <TextBlock Margin="5,0" Text="{Binding Header}" />
+      </Border>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+          <Setter TargetName="Border" Property="Background" Value="#FFF" />
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TabHeader_EditItemTemplate">
+      <Border>
+        <TextBox Text="{Binding Header, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+          <i:Interaction.Triggers>
+            <i:EventTrigger EventName="PreviewLostKeyboardFocus">
+              <i:InvokeCommandAction Command="{x:Static l:EditableItemBehaviorCommands.Commit}" />
+            </i:EventTrigger>
+          </i:Interaction.Triggers>
+        </TextBox>
+      </Border>
+    </DataTemplate>
+    <!--#endregion-->
+
+    <!--#region タグボタン用EditableItemBehavior Template-->
+    <DataTemplate x:Key="TagButton_ItemTemplate">
+      <Border
+        MinWidth="60"
+        Margin="5"
+        ContextMenu="{StaticResource EditItem_ContextMenu}">
+        <i:Interaction.Behaviors>
+          <l:DragDropBehavior />
+        </i:Interaction.Behaviors>
+        <Button
+          Command="{Binding DataContext.AddTagCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type l:MainWindow}}}"
+          CommandParameter="{Binding Text}"
+          Content="{Binding Text}" />
+      </Border>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TagButton_EditItemTemplate">
+      <Border MinWidth="60" Margin="5">
+        <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+          <i:Interaction.Triggers>
+            <i:EventTrigger EventName="PreviewLostKeyboardFocus">
+              <i:InvokeCommandAction Command="{x:Static l:EditableItemBehaviorCommands.Commit}" />
+            </i:EventTrigger>
+          </i:Interaction.Triggers>
+        </TextBox>
+      </Border>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TagButton_AddItemTemplate">
+      <Button
+        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+        Margin="5"
+        Command="{x:Static l:EditableItemBehaviorCommands.Add}"
+        CommandParameter="{Binding}"
+        Content="+" />
+    </DataTemplate>
+    <!--#endregion-->
+  </Window.Resources>
+
+  <Grid Margin="5">
+    <Grid.RowDefinitions>
+      <RowDefinition />
+      <RowDefinition Height="Auto" />
+      <RowDefinition />
+    </Grid.RowDefinitions>
+    <!--#region 使用イメージ部分-->
+    <ListBox
+      x:Name="playList"
+      DisplayMemberPath="Name"
+      ItemsSource="{Binding PlayList}">
+      <ListBox.ItemContainerStyle>
+        <Style TargetType="ListBoxItem">
+          <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+        </Style>
+      </ListBox.ItemContainerStyle>
+    </ListBox>
+    <TextBlock
+      Grid.Row="1"
+      Margin="4"
+      Text="dummy" />
+    <ListBox Grid.Row="1" ItemsSource="{Binding SelectedItem.Tags, ElementName=playList}">
+      <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+          <StackPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+      </ListBox.ItemsPanel>
+    </ListBox>
+    <!--#endregion-->
+
+    <!--#region TabControl部分-->
+    <DockPanel Grid.Row="2" Margin="0,5,0,0">
+      <ListBox
+        x:Name="tabHeader"
+        BorderBrush="{x:Null}"
+        DockPanel.Dock="Top"
+        ItemContainerStyle="{StaticResource TabHeader_ItemContainerStyle}"
+        ItemsPanel="{StaticResource FluidMove_ItemsPanelTemplate}"
+        ItemsSource="{Binding TabItemCollection}"
+        ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <i:Interaction.Behaviors>
+          <!--  DragSelectBehaviorはDragDropBehaviorより先に書く必要がある  -->
+          <l:DragSelectBehavior DataType="{x:Type l:TagModel}" />
+          <l:DragDropBehavior />
+          <l:EditableItemBehavior EditItemTemplate="{StaticResource TabHeader_EditItemTemplate}" ItemTemplate="{StaticResource TabHeader_ItemTemplate}" />
+        </i:Interaction.Behaviors>
+      </ListBox>
+      <ItemsControl
+        Background="White"
+        BorderBrush="#FF5E2626"
+        BorderThickness="1"
+        ItemsPanel="{StaticResource FluidMove_ItemsPanelTemplate}"
+        ItemsSource="{Binding SelectedItem.Content, ElementName=tabHeader}">
+        <i:Interaction.Behaviors>
+          <l:DragDropBehavior />
+          <l:EditableItemBehavior
+            AddItemTemplate="{StaticResource TagButton_AddItemTemplate}"
+            EditItemTemplate="{StaticResource TagButton_EditItemTemplate}"
+            ItemTemplate="{StaticResource TagButton_ItemTemplate}" />
+        </i:Interaction.Behaviors>
+      </ItemsControl>
+    </DockPanel>
+    <!--#endregion-->
+  </Grid>
+</Window>
