@@ -1,15 +1,17 @@
-# DragDrop2
-![�A�v���f���A�j���[�V����](https://github.com/TN8001/DragDrop2/blob/master/AppImage.gif)
-## �T�v
-WPF�p��Drag&Drop�ő���ł���_�O�I���R���g���[���H�T���v��
-## ����
-* ���C�u�A�j���[�V�����H�ő��삪�킩��₷���i���ꂪ���C���̓��@�ł�
-* Esc�L�[�ł̕ҏW�E�ړ��L�����Z���ɑΉ��i�ړ��͉E�N���b�N�ł�����
-## ���C�Z���X
-[MIT](https://github.com/TN8001/DragDrop2/blob/master/LICENSE)
-## ���ӎ���
-* ��ؐӔC�͎����܂���B
-* Behavior<T>�����ł��艟�������i�Z�p�s���̎����ł�������������R������Ȃ���
-* �ǉ������^�O�̍폜���A�{���I�łȂ������i�A�v���̏㔼���j�͍�肱��ł��܂���B
-* �ړ��̔���ʒu���R���g���[�����S�łȂ��A�N���b�N�����ʒu�ɂȂ��Ă��܂��B
-* �^�u�ǉ��{�^�����I������Ē��g�̂Ȃ���ԂɂȂ邱�Ƃ�����܂��B
+﻿# DragDrop2
+![アプリデモアニメーション](https://github.com/TN8001/DragDrop2/blob/master/AppImage.gif)
+## 概要
+WPF用のDrag&Dropで操作できるダグ選択コントロール？サンプル
+## 特徴
+* ライブアニメーション？で操作がわかりやすい（これがメインの動機です
+* Escキーでの編集・移動キャンセルに対応（移動は右クリックでもｏｋ
+## ライセンス
+CC0 1.0 Universal
+
+[![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png)](LICENSE)
+## 注意事項
+* 一切責任は持ちません。
+* Behavior<T>だけでごり押し実装（技術不足の自分でも激しく感じるコレじゃない感
+* 追加したタグの削除等、本質的でない部分（アプリの上半分）は作りこんでいません。
+* 移動の判定位置がコントロール中心でなく、クリックした位置になっています。
+* タブ追加ボタンが選択されて中身のない状態になることがあります。
